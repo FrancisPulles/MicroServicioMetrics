@@ -1,0 +1,25 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: metrics-service
+  web:
+    error:
+      include-message: always
+      include-binding-errors: always
+  mongodb:
+    # Conexión utilizando un usuario específico (no root)
+    uri: mongodb://metrics_user:secure_password@mongodb-metrics:27017/metrics_db
+    database: metrics_db
+
+# Configuración opcional para ver las consultas en consola durante el desarrollo
+logging:
+  level:
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+
+# AÑADE ESTO PARA APAGAR EUREKA TEMPORALMENTE
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false

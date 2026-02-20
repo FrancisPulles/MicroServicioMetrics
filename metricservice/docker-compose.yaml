@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  # Base de datos exclusiva para métricas
+  mongodb-metrics:
+    image: mongo:6.0
+    container_name: mongodb-metrics
+    restart: unless-stopped
+    environment:
+      # Credenciales root temporales SOLO para inicializar el contenedor
+      MONGO_INITDB_ROOT_USERNAME: root_admin
+      MONGO_INITDB_ROOT_PASSWORD: root_password
+      MONGO_INITDB_DATABASE: metrics_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - metrics_data:/data/db
+      # Script para crear el usuario no-root que usará la aplicación
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+
+  # Microservicio Metrics
+  metrics-service:
+    build: .
+    container_name: metrics-service
+    restart: unless-stopped
+    ports:
+      - "8083:8083"
+    environment:
+      # Sobreescribe la URI para asegurar que usa la red interna de Docker
+      - SPRING_DATA_MONGODB_URI=mongodb://metrics_user:secure_password@mongodb-metrics:27017/metrics_db
+    depends_on:
+      mongodb-metrics:
+        condition: service_started
+
+volumes:
+  metrics_data:
