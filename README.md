@@ -3,8 +3,11 @@ PASOS PARA LEVANTAR:
 
 2- EJECUTAR LAS SIGUIENTES LINEAS DE CÓDIGO EN POWERSHELL
 docker ps
+
 docker exec -it mongodb-metrics mongosh -u root_admin -p root_password
+
 use metrics_db
+
 db.createUser({
   user: "metrics_user",
   pwd: "secure_password",
